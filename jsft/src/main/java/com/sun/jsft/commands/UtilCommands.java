@@ -26,10 +26,9 @@ package com.sun.jsft.commands;
 import java.util.Iterator;
 import java.util.Map;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.faces.component.UIComponent;
-import jakarta.faces.bean.ManagedBean;
-import jakarta.faces.bean.ApplicationScoped;
-
+import jakarta.inject.Named;
 
 /**
  *  <p>	This class contains methods that perform common utility-type
@@ -38,7 +37,7 @@ import jakarta.faces.bean.ApplicationScoped;
  *  @author  Ken Paulsen (kenapaulsen@gmail.com)
  */
 @ApplicationScoped
-@ManagedBean(name="util")
+@Named(value="util")
 public class UtilCommands {
 
     /**

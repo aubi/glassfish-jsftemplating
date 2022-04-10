@@ -16,18 +16,22 @@
 
 package com.sun.jsftemplating.el;
 
+import java.beans.FeatureDescriptor;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
+import jakarta.el.ELContext;
+import jakarta.el.ELResolver;
+import jakarta.el.PropertyNotWritableException;
 import jakarta.faces.component.UIViewRoot;
 import jakarta.faces.context.FacesContext;
-import jakarta.faces.el.EvaluationException;
-import jakarta.faces.el.VariableResolver;
 
 /**
  * <p>
- * This <code>VariableResolver</code> exists to resolve "page session" attributes. This concept, borrowed from
+ * This <code>ELResolver</code> exists to resolve "page session" attributes. This concept, borrowed from
  * NetDynamics / JATO, stores data w/ the page so that it is available throughout the life of the page. This is longer
  * than request scope, but usually shorter than session. This implementation stores the attributes on the
  * <code>UIViewRoot</code>.
@@ -35,7 +39,7 @@ import jakarta.faces.el.VariableResolver;
  *
  * @author Ken Paulsen (ken.paulsen@sun.com)
  */
-public class PageSessionResolver extends VariableResolver {
+public class PageSessionResolver extends ELResolver {
 
     /**
      * <p>
@@ -46,13 +50,6 @@ public class PageSessionResolver extends VariableResolver {
 
     /**
      * <p>
-     * The original <code>VariableResolver</code>.
-     * </p>
-     */
-    private VariableResolver _origVariableResolver = null;
-
-    /**
-     * <p>
      * The attribute key in which to store the "page" session Map.
      * </p>
      */
@@ -60,48 +57,24 @@ public class PageSessionResolver extends VariableResolver {
 
     /**
      * <p>
-     * Constructor.
-     * </p>
-     */
-    public PageSessionResolver(VariableResolver orig) {
-        super();
-        _origVariableResolver = orig;
-    }
-
-    /**
-     * <p>
-     * This first delegates to the original <code>VariableResolver</code>, it then checks "page session" to see if the value
+     * This first delegates to the original <code>ELResolver</code>, it then checks "page session" to see if the value
      * exists.
      * </p>
      */
     @Override
-    public Object resolveVariable(FacesContext context, String name) throws EvaluationException {
-        Object result = null;
-        // Check to see if expression explicitly asks for PAGE_SESSION
-        if (name.equals(PAGE_SESSION)) {
-            // It does, return the Map
-            UIViewRoot root = context.getViewRoot();
-            result = getPageSession(context, root);
-            if (result == null) {
-                // No Map! That's ok, create one...
-                result = createPageSession(context, root);
-            }
-        } else {
-            if (_origVariableResolver != null) {
-                // Not explicit, let original resolver do its thing first...
-                result = _origVariableResolver.resolveVariable(context, name);
-            }
-
-            if (result == null) {
-                // Original resolver couldn't find anything, check page session
-                Map<String, Serializable> map = getPageSession(context, (UIViewRoot) null);
-                if (map != null) {
-                    result = map.get(name);
-                }
-            }
+    public Object getValue(ELContext context, Object base, Object property) {
+        if (null != base || property == null || !property.equals(PAGE_SESSION)) {
+            return null;
         }
-
-        return result;
+        Object result = null;
+        FacesContext facesContext = (FacesContext) context.getContext(FacesContext.class);
+        UIViewRoot root = facesContext.getViewRoot();
+        Map<String, Serializable> map = getPageSession(facesContext, root);
+        if (map == null) {
+            map = createPageSession(facesContext, root);
+        }
+        context.setPropertyResolved(true);
+        return map.get(property.toString());
     }
 
     /**
@@ -138,5 +111,36 @@ public class PageSessionResolver extends VariableResolver {
         return map;
     }
 
+    @Override
+    public void setValue(ELContext context, Object base, Object property, Object value) {
+        if (base != null || property == null || value == null || !property.equals(PAGE_SESSION)) {
+            return;
+        }
+        throw new PropertyNotWritableException("PageSessionResolver doesn't support setValue. " +
+            "base=" + base + "property=" + property);
+    }
 
+    @Override
+    public Class<?> getType(ELContext context, Object base, Object property) {
+        if (base != null || property == null || !property.equals(PAGE_SESSION)) {
+            return null;
+        }
+        context.setPropertyResolved(true);
+        return String.class;
+    }
+
+    @Override
+    public boolean isReadOnly(ELContext context, Object base, Object property) {
+        return false;
+    }
+
+    @Override
+    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context, Object base) {
+        return null;
+    }
+
+    @Override
+    public Class<?> getCommonPropertyType(ELContext context, Object base) {
+        return null;
+    }
 }

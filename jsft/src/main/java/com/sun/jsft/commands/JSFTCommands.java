@@ -31,10 +31,9 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.faces.bean.ManagedBean;
-import jakarta.faces.bean.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.faces.context.FacesContext;
-
+import jakarta.inject.Named;
 
 /**
  *  <p>	This class contains methods that perform common utility-type
@@ -43,7 +42,7 @@ import jakarta.faces.context.FacesContext;
  *  @author  Ken Paulsen (kenapaulsen@gmail.com)
  */
 @ApplicationScoped
-@ManagedBean(name="jsft")
+@Named(value="jsft")
 public class JSFTCommands {
 
     /**

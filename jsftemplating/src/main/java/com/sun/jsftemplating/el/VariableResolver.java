@@ -1364,7 +1364,8 @@ public class VariableResolver {
          */
         @Override
         public Object getValue(FacesContext ctx, LayoutElement desc, UIComponent component, String key) {
-            return ctx.getApplication().createMethodBinding(key, ACTION_ARGS);
+            return ctx.getApplication().getExpressionFactory()
+                .createMethodExpression(ctx.getELContext(), key, null, ACTION_ARGS);
         }
     }
 
