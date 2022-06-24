@@ -18,7 +18,6 @@ package com.sun.jsftemplating.el;
 
 import java.beans.FeatureDescriptor;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -63,10 +62,9 @@ public class PageSessionResolver extends ELResolver {
      */
     @Override
     public Object getValue(ELContext context, Object base, Object property) {
-        if (null != base || property == null || !property.equals(PAGE_SESSION)) {
+        if (null != base || property == null || !PAGE_SESSION.equals(property)) {
             return null;
         }
-        Object result = null;
         FacesContext facesContext = (FacesContext) context.getContext(FacesContext.class);
         UIViewRoot root = facesContext.getViewRoot();
         Map<String, Serializable> map = getPageSession(facesContext, root);
@@ -74,7 +72,7 @@ public class PageSessionResolver extends ELResolver {
             map = createPageSession(facesContext, root);
         }
         context.setPropertyResolved(true);
-        return map.get(property.toString());
+        return map;
     }
 
     /**
@@ -113,7 +111,7 @@ public class PageSessionResolver extends ELResolver {
 
     @Override
     public void setValue(ELContext context, Object base, Object property, Object value) {
-        if (base != null || property == null || value == null || !property.equals(PAGE_SESSION)) {
+        if (null != base || property == null || value == null || !PAGE_SESSION.equals(property)) {
             return;
         }
         throw new PropertyNotWritableException("PageSessionResolver doesn't support setValue. " +
@@ -122,7 +120,7 @@ public class PageSessionResolver extends ELResolver {
 
     @Override
     public Class<?> getType(ELContext context, Object base, Object property) {
-        if (base != null || property == null || !property.equals(PAGE_SESSION)) {
+        if (null != base || property == null || !PAGE_SESSION.equals(property)) {
             return null;
         }
         context.setPropertyResolved(true);
