@@ -60,6 +60,7 @@ import jakarta.faces.context.ResponseWriter;
 import jakarta.faces.render.RenderKit;
 import jakarta.faces.render.RenderKitFactory;
 import jakarta.faces.view.ViewDeclarationLanguage;
+import jakarta.faces.view.ViewDeclarationLanguageFactory;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -794,7 +795,8 @@ public class LayoutViewHandler extends ViewHandler {
             // FIXME: Temporary change to the removal of the JSF's APIs
             Object view = null;
             String viewId = context.getViewRoot().getViewId();
-            ViewDeclarationLanguage vdl = context.getApplication().getViewHandler().getViewDeclarationLanguage(context, viewId);
+            ViewDeclarationLanguageFactory viewDeclarationLanguageFactory = (ViewDeclarationLanguageFactory) FactoryFinder.getFactory(jakarta.faces.FactoryFinder.VIEW_DECLARATION_LANGUAGE_FACTORY);
+            ViewDeclarationLanguage vdl = viewDeclarationLanguageFactory.getViewDeclarationLanguage(viewId);
             if (vdl != null) {
                 Map<Object, Object> contextAttributes = context.getAttributes();
                 try {
