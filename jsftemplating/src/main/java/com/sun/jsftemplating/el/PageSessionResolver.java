@@ -62,16 +62,37 @@ public class PageSessionResolver extends ELResolver {
      */
     @Override
     public Object getValue(ELContext context, Object base, Object property) {
-        if (null != base || property == null || !PAGE_SESSION.equals(property)) {
-            return null;
+        Object value = null; // value to return
+        if (base == null && PAGE_SESSION.equals(property)) {
+            // the request is for the page session itself
+            context.setPropertyResolved(true);
+            //value = evaluatePageSessionMap(context);
+            value = new VariableResolver.PageSessionDataSource();
+        } else if (base != null && base instanceof VariableResolver.PageSessionDataSource) {
+            // return the property from the provided page context
+            VariableResolver.PageSessionDataSource psds = (VariableResolver.PageSessionDataSource)base;
+            FacesContext facesContext = (FacesContext) context.getContext(FacesContext.class);
+            UIViewRoot root = facesContext.getViewRoot();
+            value = psds.getValue(facesContext, null, root, property.toString());
+            context.setPropertyResolved(true);
+        } else if (base == null) {
+            // try to find the property in the page context
+            Map<String, Serializable> map = evaluatePageSessionMap(context);
+            value = map.get(property.toString());
+            if (value != null) {
+                context.setPropertyResolved(true);
+            }
         }
+        return value;
+    }
+
+    private Map<String, Serializable> evaluatePageSessionMap(ELContext context) {
         FacesContext facesContext = (FacesContext) context.getContext(FacesContext.class);
         UIViewRoot root = facesContext.getViewRoot();
         Map<String, Serializable> map = getPageSession(facesContext, root);
         if (map == null) {
             map = createPageSession(facesContext, root);
         }
-        context.setPropertyResolved(true);
         return map;
     }
 
@@ -111,20 +132,54 @@ public class PageSessionResolver extends ELResolver {
 
     @Override
     public void setValue(ELContext context, Object base, Object property, Object value) {
-        if (null != base || property == null || value == null || !PAGE_SESSION.equals(property)) {
-            return;
+        if (base == null && PAGE_SESSION.equals(property)) {
+            // the request is for the page session itself
+            throw new PropertyNotWritableException("PageSessionResolver doesn't support setValue. "
+                    + "base=" + base + "property=" + property);
+        } else if (base != null && base instanceof VariableResolver.PageSessionDataSource) {
+            // set the property from the provided page context
+            Map<String, Serializable> map = evaluatePageSessionMap(context);
+            map.put(property.toString(), (Serializable) value);
+            context.setPropertyResolved(true);
+        } else if (base == null) {
+            // try to find the property in the page context
+            Map<String, Serializable> map = evaluatePageSessionMap(context);
+            if (map.containsKey(property.toString())) {
+                map.put(property.toString(), (Serializable) value);
+                context.setPropertyResolved(true);
+            }
         }
-        throw new PropertyNotWritableException("PageSessionResolver doesn't support setValue. " +
-            "base=" + base + "property=" + property);
     }
 
     @Override
     public Class<?> getType(ELContext context, Object base, Object property) {
-        if (null != base || property == null || !PAGE_SESSION.equals(property)) {
-            return null;
+        Object value = null; // value to return
+        Class<?> type = null;
+        if (base == null && PAGE_SESSION.equals(property)) {
+            // the request is for the page session itself
+            context.setPropertyResolved(true);
+            //value = evaluatePageSessionMap(context);
+            type = VariableResolver.PageSessionDataSource.class;
+//        } else if (base != null && base instanceof Map) {
+        } else if (base != null && base instanceof VariableResolver.PageSessionDataSource) {
+            // return the property from the provided page context
+            VariableResolver.PageSessionDataSource psds = (VariableResolver.PageSessionDataSource) base;
+            FacesContext facesContext = (FacesContext) context.getContext(FacesContext.class);
+            UIViewRoot root = facesContext.getViewRoot();
+            value = psds.getValue(facesContext, null, root, property.toString());
+            context.setPropertyResolved(true);
+            if (value != null) {
+                type = value.getClass();
+            }
+        } else if (base == null) {
+            // try to find the property in the page context
+            Map<String, Serializable> map = evaluatePageSessionMap(context);
+            value = map.get(property.toString());
+            if (value != null) {
+                type = value.getClass();
+            }
         }
-        context.setPropertyResolved(true);
-        return String.class;
+        return type;
     }
 
     @Override
