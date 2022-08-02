@@ -246,7 +246,7 @@ public class HandlerDefinition implements java.io.Serializable {
      */
     public void addChildHandler(Handler desc) {
         if (_childHandlers == _emptyList) {
-            _childHandlers = new ArrayList();
+            _childHandlers = new ArrayList<>();
         }
         _childHandlers.add(desc);
     }

@@ -71,8 +71,8 @@ public class OptionsHandlers {
             @HandlerInput(name = "values", type = Collection.class, required = true) }, output = {
                     @HandlerOutput(name = "options", type = SelectItem[].class) })
     public static void getSunOptions(HandlerContext context) throws Exception {
-        Collection<String> labels = (Collection) context.getInputValue("labels");
-        Collection<String> values = (Collection) context.getInputValue("values");
+        Collection<String> labels = (Collection<String>) context.getInputValue("labels");
+        Collection<String> values = (Collection<String>) context.getInputValue("values");
         if (labels.size() != values.size()) {
             throw new Exception("getSunOptions Handler input " + "incorrect: Input 'labels' and 'values' size must be equal. " + "'labels' size: "
                     + labels.size() + " 'values' size: " + values.size());

@@ -19,6 +19,7 @@ package com.sun.jsftemplating.layout.facelets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
@@ -95,7 +96,7 @@ public class NSContext implements javax.xml.namespace.NamespaceContext {
      */
     @Override
     public Iterator<String> getPrefixes(String namespaceURI) {
-        ArrayList list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add(getPrefix(namespaceURI));
         return list.iterator();
     }

@@ -404,7 +404,7 @@ public class XMLLayoutDefinitionReader {
         // Add child handlers to this HandlerDefinition. This allows a
         // HandlerDefinition to define handlers that should be invoked before
         // the method defined by this handler definition is invoked.
-        List<Handler> handlers = new ArrayList(hd.getChildHandlers());
+        List<Handler> handlers = new ArrayList<>(hd.getChildHandlers());
         hd.setChildHandlers(getHandlers(node, handlers));
 
         // Add InputDef objects to the HandlerDefinition
@@ -1147,7 +1147,7 @@ public class XMLLayoutDefinitionReader {
         if (value == null) {
             // The value attribute may be null if multiple values are supplied.
             // Walk children (we only care about LIST_ELEMENT)
-            List<String> list = new ArrayList();
+            List<String> list = new ArrayList<>();
             Iterator<Node> it = getChildElements(node, LIST_ELEMENT).iterator();
             while (it.hasNext()) {
                 // Add a value to the List

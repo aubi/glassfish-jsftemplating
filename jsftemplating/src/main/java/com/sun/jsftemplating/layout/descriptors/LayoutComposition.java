@@ -256,7 +256,7 @@ public class LayoutComposition extends LayoutElementBase {
     private static Map<String, Object> getTestMap() {
 // FIXME: Shouldn't we mock up the test environment instead of changing the code here?
         if (_testMap == null) {
-            _testMap = new HashMap<String, Object>();
+            _testMap = new HashMap<>();
         }
         return _testMap;
     }
@@ -367,7 +367,7 @@ public class LayoutComposition extends LayoutElementBase {
      * This Map exists to allow test cases to run w/o an ExternalContext "request map."
      * </p>
      */
-    private static Map _testMap = null;
+    private static Map<String, Object> _testMap = null;
 
     /**
      * <p>

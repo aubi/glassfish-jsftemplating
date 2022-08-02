@@ -55,7 +55,7 @@ public class MultipleObjectFieldKeySupport {
      * @param includeFields Flag indicating whether public fields should also be included.
      */
     public MultipleObjectFieldKeySupport(Object objs[], boolean includeFields) {
-        _children = new ArrayList();
+        _children = new ArrayList<>();
         for (Object obj : objs) {
             if (obj instanceof Map) {
                 _children.add(new MapObjectFieldKeySupport(obj.getClass(), (Map) obj));

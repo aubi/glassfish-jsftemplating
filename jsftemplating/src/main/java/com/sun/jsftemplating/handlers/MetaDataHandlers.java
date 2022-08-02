@@ -71,7 +71,7 @@ public class MetaDataHandlers {
             @HandlerOutput(name = "value", type = HandlerDefinition.class) })
     public static void getGlobalHandlerInformation(HandlerContext context) {
         // Get the known global HandlerDefinitions
-        Map<String, HandlerDefinition> defs = new TreeMap(LayoutDefinitionManager.getGlobalHandlerDefinitions());
+        Map<String, HandlerDefinition> defs = new TreeMap<>(LayoutDefinitionManager.getGlobalHandlerDefinitions());
 
         // Provide a Set of ids
         context.setOutputValue("ids", defs.keySet());
@@ -107,7 +107,7 @@ public class MetaDataHandlers {
             @HandlerOutput(name = "value", type = ComponentType.class) })
     public static void getGlobalComponentTypeInformation(HandlerContext context) {
         // Get the known global HandlerDefinitions
-        Map<String, ComponentType> defs = new TreeMap(LayoutDefinitionManager.getGlobalComponentTypes(context.getFacesContext()));
+        Map<String, ComponentType> defs = new TreeMap<>(LayoutDefinitionManager.getGlobalComponentTypes(context.getFacesContext()));
 
         // Provide a Set of ids
         context.setOutputValue("ids", defs.keySet());
